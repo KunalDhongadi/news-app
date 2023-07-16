@@ -1,19 +1,8 @@
-import React, { useContext, useMemo, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { MyContext } from "../myContext";
 
 const NewsItem = ({ news, isBookmarkedProp }) => {
-  // console.log("bookmarks", localStorage.getItem("bookmarks"));
-  // const bookmark = () => {
-  //     let bookmarks = localStorage.getItem("bookmarks");
-  //     if(bookmarks){
-  //         const updatedBookmarks = [...bookmarks, news];
-  //         localStorage.setItem("bookmarks", updatedBookmarks);
-  //     }else{
-  //         console.log("herer");
-  //         localStorage.setItem("bookmarks", news);
-  //     }
-  // }
 
   const { bookmarks, setBookmarks } = useContext(MyContext);
   const [isBookmarked, setisBookmarked] = useState(isBookmarkedProp);
@@ -43,16 +32,15 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
         //     break;
         //   }
         // }
-        console.log("filter" , bookmarksObj);
+        // console.log("filter" , bookmarksObj);
         toast("Removed from bookmarks.", {className: toastClasses});
     }
     localStorage.setItem("bookmarks", JSON.stringify(bookmarksObj));
     setBookmarks(bookmarksObj);
-    console.log("changed", JSON.parse(localStorage.getItem("bookmarks")));
-
-    console.log("bookmarks newsitem", bookmarks);
+    // console.log("changed", JSON.parse(localStorage.getItem("bookmarks")));
+    // console.log("bookmarks newsitem", bookmarks);
   };
-
+  
   const formatTime = (timestamp) => {
     const currentDate = new Date();
     const date = new Date(timestamp);
@@ -76,8 +64,6 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
     }
   };
 
-  console.log("This re-rendered- nwesitems");
-
   const tooltipRef = useRef(null);
 
   
@@ -91,7 +77,7 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
 
   // const tooltipContent = useMemo(() => {
   //   return(
-  //     <div ref={tooltipRef} class={`absolute z-10 hidden inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm  tooltip dark:bg-gray-700`}>
+  //     <div ref={tooltipRef} className={`absolute z-10 hidden inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm  tooltip dark:bg-gray-700`}>
   //     Tooltip on left
   //   </div>
   //   )
@@ -130,7 +116,7 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
           <div className="hidden sm:flex sm:min-w-[260px] h-fit ms-4 p-2 border border-stone-300">
             <img src={news.image} className="h-36 w-full z-10" alt={news.title} />
           </div>
-          <div className="sm:ml-6 z-10">
+          <div className="sm:ml-4 z-10">
             <div
               data-tooltip-target="tooltip-left" data-tooltip-placement="left"
               onMouseOver={() => show_Tooltip()}
@@ -144,7 +130,7 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
                   width="18"
                   height="18"
                   fill="currentColor"
-                  class="bi bi-bookmark-fill text-stone-500"
+                  className="bi bi-bookmark-fill text-stone-500"
                   viewBox="0 0 16 16"
                 >
                   <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z" />
@@ -155,7 +141,7 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
                   width="18"
                   height="18"
                   fill="currentColor"
-                  class="bi bi-bookmark text-stone-500"
+                  className="bi bi-bookmark text-stone-500"
                   viewBox="0 0 16 16"
                 >
                   <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z" />
@@ -164,7 +150,7 @@ const NewsItem = ({ news, isBookmarkedProp }) => {
               <p className="sm:hidden ms-2">{isBookmarked ? "Remove from bookmarks" : "Add to bookmark"}</p>
             </div>
             <div className="hidden sm:block">
-            <div ref={tooltipRef} class={`absolute right-[46px] top-4 z-10 hidden px-3 py-2 text-sm font-medium text-black bg-stone-200 border border-stone-300 shadow-sm  tooltip dark:bg-gray-700`}>
+            <div ref={tooltipRef} className={`absolute right-[46px] top-4 z-10 hidden px-3 py-2 text-sm font-medium text-black bg-stone-200 border border-stone-300 shadow-sm  tooltip dark:bg-gray-700`}>
       {isBookmarked ? "Remove from bookmarks" : "Add to bookmark"}
     </div>
     </div>

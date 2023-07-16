@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { MyContext } from '../myContext';
-import { BrowserRouter as Router, Routes, Route, ScrollRestoration } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from './Navbar';
 import NewsList from './NewsList';
 import { Slide, ToastContainer } from 'react-toastify';
@@ -82,7 +82,6 @@ const Parent = () => {
       const [bookmarks, setBookmarks] = useState([]);
 
 
-
       useEffect(() => {
         let regionPreference = localStorage.getItem("region");
         let languagePreference = localStorage.getItem("language");
@@ -104,13 +103,12 @@ const Parent = () => {
       useEffect(() => {
         let storedBookmarks = localStorage.getItem("bookmarks");
         if(storedBookmarks){
-          setBookmarks(JSON.parse(storedBookmarks).reverse());
+          setBookmarks(JSON.parse(storedBookmarks));
         }else{
           setBookmarks([]);
         }
       }, [])
     
-      // console.log("bkmsks-app.js", bookmarks);
   return (
     <MyContext.Provider
       value={{
@@ -130,7 +128,7 @@ const Parent = () => {
           regions={regions}
           languages={languages}
         />
-        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 my-4">
+        <div className="mx-auto max-w-7xl px-3 sm:px-8 lg:px-12 my-4">
           <Routes>
             <Route
               exact

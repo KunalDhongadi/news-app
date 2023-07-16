@@ -7,8 +7,6 @@ import SkeletonNewsItem from "./SkeletonNewsItem";
 
 const NewsList = ({categoryProp, regions}) => {
   
-
-
   const parsedData = {
 
     "totalArticles": 75593,
@@ -136,9 +134,7 @@ const NewsList = ({categoryProp, regions}) => {
   ]
     }
 
-  const { category, setCategory, region, setRegion, language, setLanguage, bookmarks} = useContext(MyContext);
-
-  const [newsList, setNewsList] = useState(parsedData.articles);
+  const { region, language, bookmarks} = useContext(MyContext);
 
   let { keyword } = useParams();
 
@@ -150,26 +146,24 @@ const NewsList = ({categoryProp, regions}) => {
   const [errorMessage, setErrorMessage] = useState();
 
 
+  // console.log("bookmarks--" , bookmarks)
 
   const [searchParams, setSearchParams] = useSearchParams()
   const loadNews = async() => {
     if(categoryProp === "bookmarks"){
       return bookmarks;
     }else if(categoryProp === "search"){
-      console.log("keyword--", searchParams.get("keyword"));
+      // console.log("keyword--", searchParams.get("keyword"));
       const fetchNews = await fetch(
-        `https://gnews.io/api/v4/search?q=${searchParams.get("keyword")}&country=${region}&lang=${language}&apikey=2fb85de1f3ad91456018a4bb003c4915`);
+        `https://gnews.io/api/v4/search?q=${searchParams.get("keyword")}&country=${region}&lang=${language}&apikey=${process.env.REACT_APP_API_KEY}`);
       const data = await fetchNews.json();
 
       return data.articles;
 
     }else{
-      console.log("inside else loadnews")
       const fetchNews = await fetch(
-        `https://gnews.io/api/v4/top-headlines?category=${categoryProp}&country=${region}&lang=${language}&apikey=2fb85de1f3ad91456018a4bb003c4915`);
+        `https://gnews.io/api/v4/top-headlines?category=${categoryProp}&country=${region}&lang=${language}&apikey=${process.env.REACT_APP_API_KEY}`);
       const data = await fetchNews.json();
-
-
       return data.articles;
     }
   }
@@ -178,7 +172,7 @@ const NewsList = ({categoryProp, regions}) => {
   const queryClient = useQueryClient();
 
   let query_key = [];
-  if(region && language && categoryProp !== "search"){
+  if(region && language && categoryProp !== "bookmarks" && categoryProp !== "search"){
     query_key = ["news", categoryProp, region, language];
   }else if(categoryProp === "bookmarks") {
     query_key = ["news", categoryProp];
@@ -187,12 +181,11 @@ const NewsList = ({categoryProp, regions}) => {
   }
 
   const [readyToFetch, setReadytoFetch] = useState(false);
-  console.log("ready to fetch is " , readyToFetch);
   
   useEffect(() => {
     if(region !== undefined && language !== undefined){
       setReadytoFetch(true);
-      console.log("Turned true");
+      // console.log("Turned true");
     }
   }, [region, language])
 
@@ -207,7 +200,6 @@ const NewsList = ({categoryProp, regions}) => {
       if (error.response && error.response.status === 403) {
         setErrorMessage(errorMessageList["403"]);
       } else if(error.response && error.response.status === 429){
-        console.log("inside status");
         setErrorMessage(errorMessageList["429"]);
       } else{
         setErrorMessage(errorMessageList["429"]);
@@ -223,9 +215,6 @@ const NewsList = ({categoryProp, regions}) => {
     }, [newsQuery.data])
     
 
-
-    
-    console.log("err", errorMessage)
 
   // useEffect(() => {
   //   const refetchNews = async () => {
@@ -262,22 +251,20 @@ const NewsList = ({categoryProp, regions}) => {
 
 
   useEffect(() => {
-    if (scrollRef.current) {
-      console.log("inside this-",queryClient.getQueryData(['scrollPosition', categoryProp]));
-      scrollRef.current.scrollTop = queryClient.getQueryData(['scrollPosition', categoryProp]) || 0;
-    }
-  }, [categoryProp, queryClient]);
-
-
-  useEffect(() => {
-    if(scrollRef.current && categoryProp !== "search"){
-      console.log("ok scrolling from useeffect-", scrollRef.current.scrollTop);
+    if(categoryProp !== "search"){
+      if(queryClient.getQueryData(['scrollPosition', categoryProp])){
+        window.scrollTo(0, queryClient.getQueryData(['scrollPosition', categoryProp]));
+      }else{
+        window.scrollTo(0,0);
+      }
       // scrollRef.current.scrollTop = queryClient.getQueryData(['scrollPosition', categoryProp]) || 0;
-      window.scrollTo(0, queryClient.getQueryData(['scrollPosition', categoryProp]));
+      
+      // console.log("ok scrolling from useeffect-", scrollRef.current.scrollTop);
     }
   }, [queryClient, categoryProp])
 
 
+  //setting the scroll position value to cache on scroll
   useEffect(() => {
     const handleScroll = () => {
       queryClient.setQueryData(['scrollPosition', categoryProp], window.pageYOffset);
@@ -287,7 +274,20 @@ const NewsList = ({categoryProp, regions}) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  let categoryTitle;
+  if(categoryProp === "nation"){
+    categoryTitle = Object.keys(regions).find((key) => regions[key] === region)
+  }else if(categoryProp === "search"){
+    categoryTitle = `Search results for - ${searchParams.get("keyword")}`
+  }else{
+    categoryTitle = categoryProp.charAt(0).toUpperCase() + categoryProp.slice(1);
+  }
+
   
+  useEffect(() => {
+    document.title = categoryTitle + " | The Virtual News";
+  }, []);
   
   if(newsQuery.isLoading) {
     return (
@@ -298,19 +298,10 @@ const NewsList = ({categoryProp, regions}) => {
   }
       
   if(newsQuery.isError) {
-    console.log("error", newsQuery.error);
+    // console.log("error", newsQuery.error);
     return(
       <p className="mt-8 text-center">{errorMessage}</p>
     )
-  }
-
-  let categoryTitle;
-  if(categoryProp === "nation"){
-    categoryTitle = Object.keys(regions).find((key) => regions[key] === region)
-  }else if(categoryProp === "search"){
-    categoryTitle = `Search results for - ${searchParams.get("keyword")}`
-  }else{
-    categoryTitle = categoryProp.charAt(0).toUpperCase() + categoryProp.slice(1);
   }
 
   return (
@@ -330,7 +321,6 @@ const NewsList = ({categoryProp, regions}) => {
               let isBookmarked = false;
               for(let n in bookmarkObj){
                 if(bookmarkObj[n].url === news.url){
-                  // console.log("yeee", news.url);
                   isBookmarked = true;
                 }
               }
@@ -352,28 +342,6 @@ const NewsList = ({categoryProp, regions}) => {
             </p>
           )}
 
-          
-
-          {/* if the loading state is true, render loading component else render ismore button if true */}
-          {/* {this.state.loading ? (
-            <div className="d-flex justify-content-center">
-              <div className="spinner-border text-primary mt-4" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : (
-            this.state.isMore && (
-              <div className="text-center">
-                <button
-                  onClick={() => this.loadMore(this.state.page + 1)}
-                  type="button"
-                  className="btn btn-outline-secondary m-3 mb-5"
-                >
-                  Load more
-                </button>
-              </div>
-            )
-          )} */}
         </div>
       </div>
     </div>

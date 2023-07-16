@@ -17,10 +17,6 @@ body{
 body {
   margin: 0;
   padding: 0;
-  /* font-family: 'Crimson Text', serif; */
-  /* font-family: 'Cormorant Garamond', serif; */
-  /* font-family: 'Libre Baskerville', serif; */
-  /* font-family: 'Cormorant', serif; */
   font-family: 'EB Garamond', serif;
   background-color: #f5f5f4;
   overflow-y: scroll;
@@ -29,10 +25,6 @@ body {
 *{
   box-sizing: border-box;
 }
-
-/* .heading-title{
-    font-family: 'Cormorant Garamond', serif;
-} */
 
 ::selection {
   color: rgb(68 64 60);
@@ -76,24 +68,3 @@ body {
   width: 100%;
 }
 
-.card-div{
-  /* border: 2px solid #fafafa; */
-  border: 0px;
-  border-radius: 16px;
-  color: black;
-  text-decoration: none;
-}
- 
-.card-div:hover{
-  color: black;
-}
-
-.card-div:hover h5{
-  color: black;
-  text-decoration: underline;
-}
-
-
-.nav-dropdown{
-  width: 160px;
-}
