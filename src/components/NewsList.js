@@ -344,6 +344,9 @@ const NewsList = ({categoryProp, regions}) => {
 
         </div>
       </div>
+      <div className={`my-4 ${newsQuery.data.length === 0 ? "absolute bottom-0  left-1/2 transform -translate-x-1/2 -translate-y-1/2" : "flex justify-center"}`}>
+        <a href="https://kunal-dhongadi.vercel.app/" className="underline underline-offset-4">by @Kunal</a>
+      </div>
     </div>
   );
 }
